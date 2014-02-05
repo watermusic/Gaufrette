@@ -22,7 +22,7 @@ class SafeLocalSpec extends ObjectBehavior
     function it_computes_path_using_base64()
     {
         rename(vfsStream::url('test/filename'), vfsStream::url('test/'.base64_encode('filename')));
-        $this->read('filename')->shouldReturn("content\n");
+        $this->read('filename')->shouldReturn("content\r\n");
     }
 
     function it_computes_key_back_using_base64()

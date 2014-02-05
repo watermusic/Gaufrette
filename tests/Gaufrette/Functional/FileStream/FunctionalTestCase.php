@@ -157,7 +157,7 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
     {
         $this->filesystem->write('test.txt', 'some content');
         unlink('gaufrette://filestream/test.txt');
-
+        print_r($this->filesystem->has('test.txt'));
         $this->assertFalse($this->filesystem->has('test.txt'));
     }
 

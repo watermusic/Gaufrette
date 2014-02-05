@@ -152,6 +152,7 @@ EOF
      */
     public function shouldDeleteFile()
     {
+
         $this->filesystem->write('foo', 'Some content');
 
         $this->assertTrue($this->filesystem->has('foo'));

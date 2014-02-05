@@ -31,7 +31,7 @@ class LocalSpec extends ObjectBehavior
 
     function it_reads_file()
     {
-        $this->read('filename')->shouldReturn("content\n");
+        $this->read('filename')->shouldReturn("content\r\n");
     }
 
     function it_writes_file()
