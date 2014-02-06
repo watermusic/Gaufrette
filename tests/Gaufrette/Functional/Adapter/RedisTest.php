@@ -11,24 +11,14 @@ class RedisTest extends FunctionalTestCase
      * @test
      * @group functional
      */
-    public function shouldFetchKeys()
+    public function shouldGetMtime()
     {
-        $this->assertEquals(array(), $this->filesystem->keys());
-
         $this->filesystem->write('foo', 'Some content');
-        $this->filesystem->write('bar', 'Some content');
-        $this->filesystem->write('baz', 'Some content');
 
-        $actualKeys = $this->filesystem->keys();
-
-        $this->assertEquals(3, count($actualKeys));
-        foreach (array('foo', 'bar', 'baz') as $key) {
-            $this->assertContains($key, $actualKeys);
-        }
+        $this->assertGreaterThan(0, $this->filesystem->mtime('foo'));
 
         $this->filesystem->delete('foo');
-        $this->filesystem->delete('bar');
-        $this->filesystem->delete('baz');
     }
+
 
 }

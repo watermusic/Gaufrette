@@ -4,6 +4,7 @@ namespace Gaufrette\Adapter;
 
 use Gaufrette\Adapter;
 use Predis\Client;
+use Predis\Response\Status;
 
 /**
  * Gaufrette Redis Adapter
@@ -16,13 +17,17 @@ class Redis implements Adapter
      */
     protected	$redis = null;
 
+    /**
+     * @var int
+     */
+    protected   $ttl = 86400;
 
     /**
      * @param Client $redis
      */
     public function __construct(Client $redis)
     {
-        $this->$redis = $redis;
+        $this->redis = $redis;
     }
 
 
@@ -33,11 +38,7 @@ class Redis implements Adapter
     public function read($key)
     {
 
-        $result = $this->redis->pipeline(function($pipe) use ($key) {
-                $pipe->get($key);
-            });
-
-        print_r($result);
+        $result = $this->redis->get($key);
 
         return $result;
     }
@@ -51,16 +52,16 @@ class Redis implements Adapter
      */
     public function write($key, $value)
     {
+        /* @var Status $result */
+        $result = $this->redis->set($key, $value);
 
-        $result = $this->redis->pipeline(function($pipe) use ($key, $value) {
-                $pipe->set($key, $value);
-            });
-
-        if($result === false) {
-            throw new \RuntimeException(sprintf("MemCached server Fault. Result code: %s", $this->redis->getResultCode()));
+        if($result->getPayload() !== 'OK') {
+            throw new \RuntimeException(sprintf("Redis server Fault. Could not set the value of key %s", $key));
         }
 
-        return $result;
+        $this->redis->expire($key, $this->ttl);
+
+        return $this->redis->strlen($key);
     }
 
 
@@ -71,10 +72,7 @@ class Redis implements Adapter
      */
     public function exists($key)
     {
-
-        $result = $this->redis->pipeline(function($pipe) use ($key) {
-                $pipe->exists($key);
-            });
+        $result = $this->redis->exists($key);
 
         return $result;
     }
@@ -86,9 +84,8 @@ class Redis implements Adapter
      */
     public function keys()
     {
-        $result = $this->redis->pipeline(function($pipe) {
-                $pipe->keys('*');
-            });
+        $result = $this->redis->keys('*');
+
         return $result;
     }
 
@@ -100,9 +97,10 @@ class Redis implements Adapter
      */
     public function mtime($key)
     {
-        $result = $this->redis->pipeline(function($pipe) use ($key) {
-                $pipe->object('idletime', $key);
-            });
+        $ttl = $this->redis->ttl($key);
+        $result = ($ttl > 0) ? time() - ($this->ttl - $ttl) : false;
+
+        return $result;
     }
 
 
@@ -113,9 +111,7 @@ class Redis implements Adapter
      */
     public function delete($key)
     {
-        $result = $this->redis->pipeline(function($pipe) use ($key) {
-                $pipe->delete($key);
-            });
+        $result = $this->redis->del($key);
 
         return $result > 0;
 
@@ -130,9 +126,7 @@ class Redis implements Adapter
      */
     public function rename($sourceKey, $targetKey)
     {
-        $result = $this->redis->pipeline(function($pipe) use ($sourceKey, $targetKey) {
-                $pipe->rename($sourceKey, $targetKey);
-            });
+        $result = $this->redis->rename($sourceKey, $targetKey);
 
         return $result;
     }

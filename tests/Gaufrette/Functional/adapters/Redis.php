@@ -9,7 +9,10 @@ $single_server = array(
 $redis = new \Predis\Client($single_server);
 
 $keys = $redis->keys('*');
-$result = $redis->delete($keys);
 
-return new Gaufrette\Adapter\Redis($client);
+foreach($keys as $key) {
+    $result = $redis->del($key);
+}
+
+return new Gaufrette\Adapter\Redis($redis);
 
