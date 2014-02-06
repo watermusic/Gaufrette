@@ -20,14 +20,20 @@ class Redis implements Adapter
     /**
      * @var int
      */
-    protected   $ttl = 86400;
+    protected   $ttl = 3600;
 
     /**
      * @param Client $redis
+     * @param array $options
      */
-    public function __construct(Client $redis)
+    public function __construct(Client $redis, array $options = array())
     {
         $this->redis = $redis;
+
+        if(!isset($options["ttl"])) {
+            $this->ttl = $options["ttl"];
+        }
+
     }
 
 
