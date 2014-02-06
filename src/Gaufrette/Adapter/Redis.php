@@ -114,7 +114,6 @@ class Redis implements Adapter
         $result = $this->redis->del($key);
 
         return $result > 0;
-
     }
 
 
