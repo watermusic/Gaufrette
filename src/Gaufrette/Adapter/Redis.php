@@ -33,7 +33,6 @@ class Redis implements Adapter
         if(!isset($options["ttl"])) {
             $this->ttl = $options["ttl"];
         }
-
     }
 
 
