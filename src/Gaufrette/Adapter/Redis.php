@@ -30,7 +30,7 @@ class Redis implements Adapter
     {
         $this->redis = $redis;
 
-        if(!isset($options["ttl"])) {
+        if(isset($options["ttl"])) {
             $this->ttl = $options["ttl"];
         }
     }
@@ -42,7 +42,6 @@ class Redis implements Adapter
      */
     public function read($key)
     {
-
         $result = $this->redis->get($key);
 
         return $result;
@@ -64,7 +63,7 @@ class Redis implements Adapter
             throw new \RuntimeException(sprintf("Redis server Fault. Could not set the value of key %s", $key));
         }
 
-        $this->redis->expire($key, $this->ttl);
+        $result = $this->redis->expire($key, $this->ttl);
 
         return $this->redis->strlen($key);
     }

@@ -14,7 +14,7 @@ foreach($keys as $key) {
     $result = $redis->del($key);
 }
 
-$ttl = 60;
+$options = array("ttl" => 4);
 
-return new Gaufrette\Adapter\Redis($redis, $ttl);
+return new Gaufrette\Adapter\Redis($redis, $options);
 

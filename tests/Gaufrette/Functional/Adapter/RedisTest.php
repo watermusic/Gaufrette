@@ -10,14 +10,17 @@ class RedisTest extends FunctionalTestCase
     /**
      * @test
      * @group functional
+     * @expectedException Gaufrette\Exception\FileNotFound
      */
-    public function shouldGetMtime()
+    public function shouldExpires()
     {
-        $this->filesystem->write('foo', 'Some content');
+        $key ="foo";
 
-        $this->assertGreaterThan(0, $this->filesystem->mtime('foo'));
+        $this->filesystem->write($key, 'Some content', true);
+        sleep(5);
+        $content = $this->filesystem->read($key);
 
-        $this->filesystem->delete('foo');
+        $this->filesystem->delete($key);
     }
 
 
