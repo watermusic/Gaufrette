@@ -5,14 +5,13 @@ namespace Gaufrette\Adapter;
 use Gaufrette\Util;
 use Gaufrette\Adapter;
 use Gaufrette\Stream;
-use Gaufrette\Adapter\StreamFactory;
 use Gaufrette\Exception;
 
 /**
  * Adapter for the local filesystem
  *
  */
-class FreeLocal extends Local
+class FreeLocal extends Local implements MetadataSupporter
 {
 
     protected $host = null;
@@ -52,6 +51,42 @@ class FreeLocal extends Local
             $this->host,
             $key
         );
+    }
+
+    /**
+     * @param string $key
+     * @param array $content
+     * @return int
+     */
+    public function setMetadata($key, $content)
+    {
+        $key = $this->getMetaDataKey($key);
+
+        $path = $this->computePath($key);
+
+        $this->ensureDirectoryExists(dirname($path), true);
+
+        return file_put_contents($path, $content);
+
+    }
+
+    /**
+     * @param  string $key
+     * @return array
+     */
+    public function getMetadata($key)
+    {
+        $key = $this->getMetaDataKey($key);
+        return file_get_contents($this->computePath($key));
+    }
+
+    /**
+     * @param $key
+     * @return string
+     */
+    public function getMetaDataKey($key)
+    {
+        return sprintf("%.%",$key,"meta");
     }
 
 
