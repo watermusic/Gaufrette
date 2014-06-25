@@ -54,30 +54,33 @@ class FreeLocal extends Local implements MetadataSupporter
     }
 
     /**
+     * Saves metadata
+     *
      * @param string $key
      * @param array $content
      * @return int
      */
     public function setMetadata($key, $content)
     {
-        $key = $this->getMetaDataKey($key);
-
-        $path = $this->computePath($key);
+        $path = $this->computePath($this->getMetaDataKey($key));
 
         $this->ensureDirectoryExists(dirname($path), true);
 
-        return file_put_contents($path, $content);
+        return file_put_contents($path, serialize($content));
 
     }
 
     /**
+     * Reads metadata
+     *
      * @param  string $key
      * @return array
      */
     public function getMetadata($key)
     {
         $key = $this->getMetaDataKey($key);
-        return file_get_contents($this->computePath($key));
+
+        return unserialize(file_get_contents($this->computePath($key)));
     }
 
     /**
