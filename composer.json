@@ -50,7 +50,7 @@
         "rackspace/php-opencloud"  : "1.6.*",
         "phpspec/phpspec": "2.0.*",
         "phpseclib/phpseclib": "dev-master",
-        "predis/predis": "dev-master",
+        "predis/predis": "^1.1",
         "rackspace/php-cloudfiles": "*",
         "doctrine/dbal": ">=2.3",
         "dropbox-php/dropbox-php": "*",
